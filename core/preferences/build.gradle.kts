@@ -1,4 +1,5 @@
 import com.google.protobuf.gradle.*
+import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     id("com.android.library")
@@ -38,8 +39,10 @@ android {
 }
 
 protobuf {
+    // Add support for arm Mac
+    val archSuffix = if (Os.isFamily(Os.FAMILY_MAC)) ":osx-x86_64" else ""
     protoc {
-        artifact = "com.google.protobuf:protoc:${libs.versions.protobuf.get()}"
+        artifact = "com.google.protobuf:protoc:${libs.versions.protobuf.get()}$archSuffix"
     }
 
     // Generates the java Protobuf-lite code for the Protobufs in this project. See
