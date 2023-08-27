@@ -201,20 +201,15 @@ internal class WeatherRepositoryImpl(
     }
 
     override fun getAvailableProviders(): List<WeatherSettings.WeatherProvider> {
-        val providers = mutableListOf<WeatherSettings.WeatherProvider>()
-        if (BrightskyProvider(context).isAvailable()) {
-            providers.add(WeatherSettings.WeatherProvider.BrightSky)
+        return WeatherSettings.WeatherProvider.values().filter {
+            when (it) {
+                WeatherSettings.WeatherProvider.BrightSky -> BrightskyProvider(context).isAvailable()
+                WeatherSettings.WeatherProvider.OpenWeatherMap -> OpenWeatherMapProvider(context).isAvailable()
+                WeatherSettings.WeatherProvider.MetNo -> MetNoProvider(context).isAvailable()
+                WeatherSettings.WeatherProvider.Here -> HereProvider(context).isAvailable()
+                WeatherSettings.WeatherProvider.UNRECOGNIZED -> false
+            }
         }
-        if (OpenWeatherMapProvider(context).isAvailable()) {
-            providers.add(WeatherSettings.WeatherProvider.OpenWeatherMap)
-        }
-        if (MetNoProvider(context).isAvailable()) {
-            providers.add(WeatherSettings.WeatherProvider.MetNo)
-        }
-        if (HereProvider(context).isAvailable()) {
-            providers.add(WeatherSettings.WeatherProvider.Here)
-        }
-        return providers
     }
 }
 
