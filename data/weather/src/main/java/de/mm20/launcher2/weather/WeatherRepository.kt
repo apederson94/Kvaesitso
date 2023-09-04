@@ -40,6 +40,12 @@ interface WeatherRepository {
 
     val selectedProvider: Flow<WeatherSettings.WeatherProvider>
 
+    fun setApiKey(key: String)
+
+    val selectedApiKeyIndex: Flow<Int?>
+
+    val apiKeys: Flow<List<WeatherSettings.ApiKey>>
+
     fun clearForecasts()
 }
 
@@ -58,6 +64,10 @@ internal class WeatherRepositoryImpl(
     private val hasLocationPermission = permissionsManager.hasPermission(PermissionGroup.Location)
 
     override val selectedProvider = dataStore.data.map { it.weather.provider }
+
+    override val selectedApiKeyIndex = dataStore.data.map { it.weather.selectedApiKey }
+
+    override val apiKeys = dataStore.data.map { it.weather.apiKeysList }
 
     override val forecasts: Flow<List<DailyForecast>>
         get() = database.weatherDao().getForecasts()
@@ -95,11 +105,45 @@ internal class WeatherRepositoryImpl(
     override fun selectProvider(provider: WeatherSettings.WeatherProvider) {
         scope.launch {
             dataStore.updateData {
+                val selectedApiKey = it.weather.apiKeysList.withIndex().firstOrNull { key ->
+                    key.value.provider == provider
+                }?.index ?: -1
+
                 it.toBuilder()
                     .setWeather(
                         it.weather.toBuilder()
                             .setProvider(provider)
+                            .setSelectedApiKey(selectedApiKey)
                     )
+                    .build()
+            }
+        }
+    }
+
+    override fun setApiKey(key: String) {
+        scope.launch {
+            dataStore.updateData { settings ->
+                val newApiKeys = settings.weather.let {
+                    val updatedApiKey = WeatherSettings.ApiKey.newBuilder()
+                        .setProvider(it.provider)
+                        .setKey(key)
+                        .build()
+
+                    val existingKeyIndex = it.apiKeysList.withIndex().firstOrNull { indexedKey ->
+                        indexedKey.value.provider == it.provider
+                    }?.index
+
+                    existingKeyIndex?.let { index ->
+                        it.toBuilder()
+                            .setApiKeys(index, updatedApiKey)
+                            .setSelectedApiKey(index)
+                    } ?: it.toBuilder()
+                        .addApiKeys(updatedApiKey)
+                        .setSelectedApiKey(it.apiKeysCount)
+                }
+
+                settings.toBuilder()
+                    .setWeather(newApiKeys)
                     .build()
             }
         }
@@ -215,7 +259,7 @@ internal class WeatherRepositoryImpl(
 
 class WeatherUpdateWorker(val context: Context, params: WorkerParameters) :
     CoroutineWorker(context, params), KoinComponent {
-    val repository: WeatherRepository by inject()
+    private val repository: WeatherRepository by inject()
 
     override suspend fun doWork(): Result {
         Log.d("MM20", "Requesting weather data")

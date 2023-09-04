@@ -97,8 +97,14 @@ message Settings {
       Here = 2;
       BrightSky = 3;
     }
+    message ApiKey {
+      WeatherProvider provider = 1;
+      string key = 2;
+    }
     WeatherProvider provider = 1;
     bool imperial_units = 2;
+    repeated ApiKey apiKeys = 4;
+    int32 selectedApiKey = 5;
     reserved 3;
   }
   WeatherSettings weather = 5;

@@ -463,6 +463,7 @@
     <string name="preference_location">Location</string>
     <string name="preference_imperial_units_summary">Use degrees Fahrenheit and miles per hour</string>
     <string name="preference_imperial_units">Imperial units</string>
+    <string name="preference_api_key">API Key</string>
     <string name="widget_config_weather_compact">Compact mode</string>
     <string name="preference_compact_mode_summary">Hide hourly and daily forecasts</string>
     <string name="preference_category_debug">Debug</string>

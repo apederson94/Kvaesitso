@@ -14,6 +14,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.koin.core.component.KoinComponent
@@ -32,6 +34,12 @@ class WeatherIntegrationSettingsScreenVM : ViewModel(), KoinComponent {
         repository.selectProvider(provider)
     }
 
+    val apiKey = mutableStateOf("")
+
+    fun setApiKey(key: String) {
+        repository.setApiKey(key)
+    }
+
     val imperialUnits = dataStore.data.map { it.weather.imperialUnits }
     fun setImperialUnits(imperialUnits: Boolean) {
         viewModelScope.launch {
@@ -45,6 +53,7 @@ class WeatherIntegrationSettingsScreenVM : ViewModel(), KoinComponent {
 
     val autoLocation = repository.autoLocation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
     fun setAutoLocation(autoLocation: Boolean) {
         repository.setAutoLocation(autoLocation)
     }
@@ -69,6 +78,14 @@ class WeatherIntegrationSettingsScreenVM : ViewModel(), KoinComponent {
                 else loc
             }.collectLatest {
                 this@WeatherIntegrationSettingsScreenVM.location.value = it
+            }
+        }
+        viewModelScope.launch {
+            repository.selectedApiKeyIndex.collectLatest { index ->
+                val apiKey = index?.let {
+                    repository.apiKeys.first()[it]
+                }?.key ?: ""
+                this@WeatherIntegrationSettingsScreenVM.apiKey.value = apiKey
             }
         }
     }
