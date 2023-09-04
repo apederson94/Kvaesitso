@@ -40,6 +40,8 @@ interface WeatherRepository {
 
     val selectedProvider: Flow<WeatherSettings.WeatherProvider>
 
+    val usesApiKey: Flow<Boolean>
+
     fun setApiKey(key: String)
 
     val apiKeys: Flow<List<WeatherSettings.ApiKey>>
@@ -64,6 +66,8 @@ internal class WeatherRepositoryImpl(
     override val selectedProvider = dataStore.data.map { it.weather.provider }
 
     override val apiKeys = dataStore.data.map { it.weather.apiKeysList }
+
+    override val usesApiKey: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     override val forecasts: Flow<List<DailyForecast>>
         get() = database.weatherDao().getForecasts()
@@ -101,10 +105,6 @@ internal class WeatherRepositoryImpl(
     override fun selectProvider(provider: WeatherSettings.WeatherProvider) {
         scope.launch {
             dataStore.updateData {
-                val selectedApiKey = it.weather.apiKeysList.withIndex().firstOrNull { key ->
-                    key.value.provider == provider
-                }?.index ?: -1
-
                 it.toBuilder()
                     .setWeather(
                         it.weather.toBuilder()
@@ -161,6 +161,7 @@ internal class WeatherRepositoryImpl(
             selectedProvider.collectLatest {
                 if (it != providerSetting) {
                     provider = get { parametersOf(it) }
+                    usesApiKey.value = provider.usesApiKey
                     location.value = provider.getLocation()
                     lastLocation.value = provider.getLastLocation()
                     autoLocation.value = provider.autoLocation

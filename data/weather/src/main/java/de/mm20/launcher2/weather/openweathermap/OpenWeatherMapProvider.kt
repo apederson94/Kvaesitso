@@ -27,6 +27,8 @@ class OpenWeatherMapProvider(override val context: Context) :
             .build()
     }
 
+    override val usesApiKey: Boolean = true
+
     private val openWeatherMapService by lazy {
         retrofit.create(OpenWeatherMapApi::class.java)
     }
@@ -204,14 +206,16 @@ class OpenWeatherMapProvider(override val context: Context) :
         }
     }
 
-    private fun getApiKey(): String? {
-        val resId = getApiKeyResId()
-        if (resId != 0) return context.getString(resId)
-        return null
+    override suspend fun getApiKey(): String? {
+        return super.getApiKey() ?: run {
+            val resId = getApiKeyResId()
+            if (resId != 0) return context.getString(resId)
+            return null
+        }
     }
 
     override fun isAvailable(): Boolean {
-        return getApiKeyResId() != 0
+        return true //getApiKeyResId() != 0
     }
 
     override val name: String

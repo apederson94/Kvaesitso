@@ -8,12 +8,22 @@ import android.location.LocationManager
 import androidx.core.content.edit
 import androidx.core.content.getSystemService
 import de.mm20.launcher2.ktx.checkPermission
+import de.mm20.launcher2.preferences.LauncherDataStore
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-abstract class WeatherProvider<T : WeatherLocation> {
+abstract class WeatherProvider<T : WeatherLocation>: KoinComponent {
 
     internal abstract val context: Context
 
     internal abstract val preferences: SharedPreferences
+
+    internal val dataStore: LauncherDataStore by inject()
+
+    internal open val usesApiKey: Boolean = false
 
     var autoLocation: Boolean
         get() {
@@ -54,6 +64,16 @@ abstract class WeatherProvider<T : WeatherLocation> {
             location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         }
         return location
+    }
+
+    internal open suspend fun getApiKey(): String? {
+        val weather = dataStore.data.firstOrNull()
+            ?.weather
+
+            return weather?.apiKeysList
+            ?.firstOrNull {
+                it.provider == weather.provider
+            }?.key
     }
 
     internal abstract suspend fun loadWeatherData(location: T): WeatherUpdateResult<T>?

@@ -45,7 +45,8 @@ fun WeatherIntegrationSettingsScreen() {
                     },
                     value = weatherProvider
                 )
-                if (BuildConfig.DEBUG) {
+                val usesApiKey by viewModel.usesApiKey.collectAsState()
+                if (usesApiKey) {
                     val apiKey by viewModel.apiKey
                     TextPreference(
                         title = stringResource(R.string.preference_api_key),

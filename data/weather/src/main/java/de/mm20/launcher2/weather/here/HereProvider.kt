@@ -20,6 +20,8 @@ class HereProvider(override val context: Context) : LatLonWeatherProvider() {
             .build()
     }
 
+    override val usesApiKey: Boolean = true
+
     private val hereWeatherService by lazy {
         retrofit.create<HereWeatherApi>()
     }
@@ -308,14 +310,16 @@ class HereProvider(override val context: Context) : LatLonWeatherProvider() {
         return emptyList()
     }
 
-    private fun getApiKey(): String? {
-        val resId = getApiKeyResId()
-        if (resId != 0) return context.getString(resId)
-        return null
+    override suspend fun getApiKey(): String? {
+        return super.getApiKey() ?: run {
+            val resId = getApiKeyResId()
+            if (resId != 0) return context.getString(resId)
+            return null
+        }
     }
 
     override fun isAvailable(): Boolean {
-        return getApiKeyResId() != 0
+        return true //getApiKeyResId() != 0
     }
 
 

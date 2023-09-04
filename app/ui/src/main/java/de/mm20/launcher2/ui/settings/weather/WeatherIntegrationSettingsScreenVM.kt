@@ -30,11 +30,15 @@ class WeatherIntegrationSettingsScreenVM : ViewModel(), KoinComponent {
 
     val weatherProvider = repository.selectedProvider
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+    val showApiKeyField = repository.selectedProvider
     fun setWeatherProvider(provider: WeatherSettings.WeatherProvider) {
         repository.selectProvider(provider)
     }
 
     val apiKey = mutableStateOf("")
+
+    val usesApiKey = repository.usesApiKey
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     fun setApiKey(key: String) {
         repository.setApiKey(key)
