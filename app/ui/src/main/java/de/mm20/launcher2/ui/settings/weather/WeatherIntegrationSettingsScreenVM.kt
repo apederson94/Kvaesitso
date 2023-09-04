@@ -81,9 +81,9 @@ class WeatherIntegrationSettingsScreenVM : ViewModel(), KoinComponent {
             }
         }
         viewModelScope.launch {
-            repository.selectedApiKeyIndex.collectLatest { index ->
-                val apiKey = index?.let {
-                    repository.apiKeys.first()[it]
+            repository.selectedProvider.collectLatest { provider ->
+                val apiKey = repository.apiKeys.first().firstOrNull {
+                    it.provider == provider
                 }?.key ?: ""
                 this@WeatherIntegrationSettingsScreenVM.apiKey.value = apiKey
             }

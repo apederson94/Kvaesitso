@@ -42,8 +42,6 @@ interface WeatherRepository {
 
     fun setApiKey(key: String)
 
-    val selectedApiKeyIndex: Flow<Int?>
-
     val apiKeys: Flow<List<WeatherSettings.ApiKey>>
 
     fun clearForecasts()
@@ -64,8 +62,6 @@ internal class WeatherRepositoryImpl(
     private val hasLocationPermission = permissionsManager.hasPermission(PermissionGroup.Location)
 
     override val selectedProvider = dataStore.data.map { it.weather.provider }
-
-    override val selectedApiKeyIndex = dataStore.data.map { it.weather.selectedApiKey }
 
     override val apiKeys = dataStore.data.map { it.weather.apiKeysList }
 
@@ -113,7 +109,6 @@ internal class WeatherRepositoryImpl(
                     .setWeather(
                         it.weather.toBuilder()
                             .setProvider(provider)
-                            .setSelectedApiKey(selectedApiKey)
                     )
                     .build()
             }
@@ -136,10 +131,8 @@ internal class WeatherRepositoryImpl(
                     existingKeyIndex?.let { index ->
                         it.toBuilder()
                             .setApiKeys(index, updatedApiKey)
-                            .setSelectedApiKey(index)
                     } ?: it.toBuilder()
                         .addApiKeys(updatedApiKey)
-                        .setSelectedApiKey(it.apiKeysCount)
                 }
 
                 settings.toBuilder()
