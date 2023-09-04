@@ -45,12 +45,14 @@ fun WeatherIntegrationSettingsScreen() {
                     },
                     value = weatherProvider
                 )
-                val apiKey by viewModel.apiKey
-                TextPreference(
-                    title = stringResource(R.string.preference_api_key),
-                    value = apiKey,
-                    onValueChanged = { viewModel.setApiKey(it) }
-                )
+                if (BuildConfig.DEBUG) {
+                    val apiKey by viewModel.apiKey
+                    TextPreference(
+                        title = stringResource(R.string.preference_api_key),
+                        value = apiKey,
+                        onValueChanged = { viewModel.setApiKey(it) }
+                    )
+                }
                 val imperialUnits by viewModel.imperialUnits.collectAsState(false)
                 SwitchPreference(
                     title = stringResource(R.string.preference_imperial_units),
