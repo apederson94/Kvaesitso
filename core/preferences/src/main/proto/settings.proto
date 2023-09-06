@@ -96,6 +96,7 @@ message Settings {
       OpenWeatherMap = 1;
       Here = 2;
       BrightSky = 3;
+      PirateWeather = 4;
     }
     message ApiKey {
       WeatherProvider provider = 1;

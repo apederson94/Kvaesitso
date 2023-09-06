@@ -245,6 +245,7 @@ internal class WeatherRepositoryImpl(
                 WeatherSettings.WeatherProvider.OpenWeatherMap -> OpenWeatherMapProvider(context).isAvailable()
                 WeatherSettings.WeatherProvider.MetNo -> MetNoProvider(context).isAvailable()
                 WeatherSettings.WeatherProvider.Here -> HereProvider(context).isAvailable()
+                WeatherSettings.WeatherProvider.PirateWeather -> PirateWeatherProvider
                 WeatherSettings.WeatherProvider.UNRECOGNIZED -> false
             }
         }
