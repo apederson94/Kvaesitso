@@ -37,6 +37,7 @@ fun WeatherIntegrationSettingsScreen() {
                             WeatherProvider.OpenWeatherMap -> stringResource(R.string.provider_openweathermap)
                             WeatherProvider.Here -> stringResource(R.string.provider_here)
                             WeatherProvider.BrightSky -> stringResource(R.string.provider_brightsky)
+                            WeatherProvider.PirateWeather -> stringResource(R.string.provider_pirateweather)
                             else -> "Unknown provider"
                         } to it
                     },

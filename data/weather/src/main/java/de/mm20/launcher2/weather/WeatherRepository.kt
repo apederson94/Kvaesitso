@@ -12,6 +12,7 @@ import de.mm20.launcher2.weather.brightsky.BrightskyProvider
 import de.mm20.launcher2.weather.here.HereProvider
 import de.mm20.launcher2.weather.metno.MetNoProvider
 import de.mm20.launcher2.weather.openweathermap.OpenWeatherMapProvider
+import de.mm20.launcher2.weather.pirateweather.PirateWeatherProvider
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.koin.core.component.KoinComponent
@@ -245,7 +246,7 @@ internal class WeatherRepositoryImpl(
                 WeatherSettings.WeatherProvider.OpenWeatherMap -> OpenWeatherMapProvider(context).isAvailable()
                 WeatherSettings.WeatherProvider.MetNo -> MetNoProvider(context).isAvailable()
                 WeatherSettings.WeatherProvider.Here -> HereProvider(context).isAvailable()
-                WeatherSettings.WeatherProvider.PirateWeather -> PirateWeatherProvider
+                WeatherSettings.WeatherProvider.PirateWeather -> PirateWeatherProvider(context).isAvailable()
                 WeatherSettings.WeatherProvider.UNRECOGNIZED -> false
             }
         }

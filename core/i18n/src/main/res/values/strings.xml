@@ -456,6 +456,7 @@
     <string name="provider_metno">MET Norway</string>
     <string name="provider_openweathermap">OpenWeatherMap</string>
     <string name="provider_brightsky">Deutscher Wetterdienst (Germany only)</string>
+    <string name="provider_pirateweather">Pirate Weather</string>
     <string name="provider_here">HERE</string>
     <string name="preference_category_location">Location</string>
     <string name="preference_automatic_location">Automatic location</string>

@@ -26,7 +26,6 @@ class BrightskyProvider(
     }
 
     override suspend fun loadWeatherData(location: LatLonWeatherLocation): WeatherUpdateResult<LatLonWeatherLocation>? {
-
         val result = runCatching {
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
             val date = Calendar.getInstance()
